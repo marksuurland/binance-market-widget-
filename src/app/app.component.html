@@ -8,20 +8,20 @@
 
   <mat-tab-group *ngIf="!loading && searchterm === ''" mat-align-tabs="start">
     <mat-tab label="BNB">
-      <app-table-symbols [symbols]="bnbsymbols" ></app-table-symbols>
+      <app-table-symbols [symbols]="binanceService.bnbsymbols" ></app-table-symbols>
     </mat-tab>
     <mat-tab label="BTC">
-      <app-table-symbols [symbols]="btcsymbols" ></app-table-symbols>
+      <app-table-symbols [symbols]="binanceService.btcsymbols" ></app-table-symbols>
     </mat-tab>
     <mat-tab label="ALTS">
-      <app-table-symbols [categories]="categoriesALTS" [symbols]="altssymbols"></app-table-symbols>
+      <app-table-symbols [categories]="categoriesALTS" [symbols]="binanceService.altssymbols"></app-table-symbols>
     </mat-tab>
     <mat-tab label="FAIT">
-      <app-table-symbols [categories]="categoriesFAIT" [symbols]="faitsymbols"></app-table-symbols>
+      <app-table-symbols [categories]="categoriesFAIT" [symbols]="binanceService.faitsymbols"></app-table-symbols>
     </mat-tab>
   </mat-tab-group>
 
   <div>
-    <app-table-symbols *ngIf="!loading && searchterm !== ''" [searchterm]="searchterm" [symbols]="data"></app-table-symbols>
+    <app-table-symbols *ngIf="!loading && searchterm !== ''" [searchterm]="searchterm" [symbols]="binanceService.allsymbols"></app-table-symbols>
   </div>
 </div>

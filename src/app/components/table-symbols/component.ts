@@ -10,7 +10,7 @@ import { Columns } from 'src/types/table.interface';
     templateUrl: './component.html'
 })
 export class TableSymbolsComponent implements OnInit, OnChanges, AfterViewInit {
-    public dataSource = new MatTableDataSource<any[]>([]);
+    public dataSource = new MatTableDataSource<IProduct[]>([]);
 
     public displayedColumns: string[] = [Columns.Pair, Columns.LastPrice, Columns.TwentyFourHourChange];
 

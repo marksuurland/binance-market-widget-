@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Categories, IGetProducts, IProduct, IProductMessage } from 'src/types/products.interface';
 import { webSocket } from "rxjs/webSocket";
+import { BinanceService } from 'src/services/binance.service';
 
 @Component({
   selector: 'app-root',
@@ -9,12 +9,6 @@ import { webSocket } from "rxjs/webSocket";
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  public data: IProduct[] = [];
-  public bnbsymbols: IProduct[] = [];
-  public btcsymbols: IProduct[] = [];
-  public altssymbols: IProduct[] = [];
-  public faitsymbols: IProduct[] = [];
-
   public loading = true;
   public searchterm = '';
   public categoriesALTS: string[] = [Categories.ETH, Categories.TRX, Categories.XRP];
@@ -23,51 +17,22 @@ export class AppComponent implements OnInit {
     Categories.AUD, Categories.BIDR, Categories.BRL, Categories.DAI, Categories.GBP,
     Categories.IDRT, Categories.NGN, Categories.RUB, Categories.ZAR, Categories.UAH];
 
-  constructor(private http: HttpClient) {
+  constructor(public binanceService: BinanceService) {
   }
 
   ngOnInit() {
-    this.getProducts();
-    this.webSocket();
+    this.binanceService.getProducts().subscribe((products: IProduct[]) => {
+      this.binanceService.formatData(products);
+      this.loading = false;
+    });
+    this.openWebSocket();
   }
 
   public applyFilter(event: Event) {
     this.searchterm = (event.target as HTMLInputElement).value;
   }
 
-  public getSymbols(parentMarket: string) {
-    if (parentMarket === 'BTC') {
-      return this.btcsymbols;
-    } else if (parentMarket === 'BNB') {
-      return this.bnbsymbols;
-    } else {
-      return this.altssymbols;
-    }
-  }
-
-  public getProducts() {
-    this.http.get(
-      `https://www.binance.com/exchange-api/v1/public/asset-service/product/get-products`
-    ).subscribe({
-      next: (response: IGetProducts) => {
-        this.data = response.data;
-      },
-      error: err => console.error('Observer got an error: ' + err),
-      complete: () => {
-        this.formatData();
-      },
-    });
-  }
-
-  private formatData() {
-    this.data.forEach((element: IProduct) => {
-      this.seperateByParentMarket(element);
-      this.setTrend(element);
-    });
-    this.loading = false;
-  }
-
-  public webSocket() {
+  public openWebSocket() {
     // const subject = webSocket('wss://stream.binance.com/stream?streams=!miniTicker@arr');
 
     // subject.subscribe(
@@ -86,31 +51,17 @@ export class AppComponent implements OnInit {
     // );
   }
 
-  private setTrend(element: IProduct) {
-    const percentage = (element.c - element.o) / element.o * 100;
-    if (percentage > 0) {
-      element.trend = 'up';
-    } else if (percentage < 0) {
-      element.trend = 'down';
-    } else {
-      element.trend = 'neutral';
-    }
-  }
-
-  private seperateByParentMarket(element: IProduct) {
-    this.getSymbolsByParentMarket(element.pm).push(element);
-  }
 
   private getSymbolsByParentMarket(parentMarket: string): IProduct[] {
     switch (parentMarket) {
       case 'BTC':
-        return this.btcsymbols;
+        return this.binanceService.btcsymbols;
       case 'BNB':
-        return this.bnbsymbols;
+        return this.binanceService.bnbsymbols;
       case 'ALTS':
-        return this.altssymbols;
+        return this.binanceService.altssymbols;
       default:
-        return this.faitsymbols;
+        return this.binanceService.faitsymbols;
     }
   }
 
