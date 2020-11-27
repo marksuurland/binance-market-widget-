@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { IProduct } from 'src/types/products.interface';
+import { Categories, IProduct } from 'src/types/products.interface';
 import { Columns } from 'src/types/table.interface';
 
 @Component({
@@ -10,7 +10,7 @@ import { Columns } from 'src/types/table.interface';
     templateUrl: './component.html'
 })
 export class TableSymbolsComponent implements OnInit, OnChanges, AfterViewInit {
-    public dataSource = new MatTableDataSource<IProduct[]>([]);
+    public dataSource = new MatTableDataSource<IProduct>([]);
 
     public displayedColumns: string[] = [Columns.Pair, Columns.LastPrice, Columns.TwentyFourHourChange];
 
@@ -18,8 +18,8 @@ export class TableSymbolsComponent implements OnInit, OnChanges, AfterViewInit {
 
     @ViewChild(MatSort) sort: MatSort;
 
-    @Input() symbols;
-    @Input() categories;
+    @Input() symbols: IProduct[];
+    @Input() categories: Categories[];
     @Input() searchterm: string;
 
     constructor() {}
@@ -36,11 +36,11 @@ export class TableSymbolsComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this.dataSource.sortingDataAccessor = (data: IProduct[], sortHeaderId: string) => {
+        this.dataSource.sortingDataAccessor = (data: IProduct, sortHeaderId: string) => {
             switch (sortHeaderId) {
-                case Columns.Pair: return data['b'];
-                case Columns.LastPrice: return data['c'];
-                case Columns.TwentyFourHourChange: return ((data['c'] - data['o']) / data['o'] * 100);
+                case Columns.Pair: return data.b;
+                case Columns.LastPrice: return data.c;
+                case Columns.TwentyFourHourChange: return ((data.c - data.o) / data.o * 100);
             }
         };
         this.dataSource.sort = this.sort;

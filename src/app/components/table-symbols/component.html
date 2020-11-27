@@ -1,6 +1,7 @@
 <mat-button-toggle-group *ngIf="categories" multiple name="categories" aria-label="Symbol Categories">
     <mat-button-toggle *ngFor="let category of categories" (click)="filterCategories(category)">
-        {{ category }}</mat-button-toggle>
+        {{ category }}
+    </mat-button-toggle>
 </mat-button-toggle-group>
 
 <table mat-table class="full_width" [dataSource]="dataSource" matSort>
