@@ -14,7 +14,7 @@ export class TableSymbolsComponent implements OnInit, OnChanges, AfterViewInit {
 
     public displayedColumns: string[] = [Columns.Pair, Columns.LastPrice, Columns.TwentyFourHourChange];
 
-    private selectedCategories = [];
+    private selectedCategories: string[] = [];
 
     @ViewChild(MatSort) sort: MatSort;
 
@@ -36,13 +36,7 @@ export class TableSymbolsComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this.dataSource.sortingDataAccessor = (data: IProduct, sortHeaderId: string) => {
-            switch (sortHeaderId) {
-                case Columns.Pair: return data.b;
-                case Columns.LastPrice: return data.c;
-                case Columns.TwentyFourHourChange: return ((data.c - data.o) / data.o * 100);
-            }
-        };
+        this.overrideSort();
         this.dataSource.sort = this.sort;
     }
 
@@ -54,6 +48,16 @@ export class TableSymbolsComponent implements OnInit, OnChanges, AfterViewInit {
 
     private setTableData(): void {
         this.dataSource.data = this.symbols;
+    }
+
+    private overrideSort(): void {
+        this.dataSource.sortingDataAccessor = (data: IProduct, sortHeaderId: string) => {
+            switch (sortHeaderId) {
+                case Columns.Pair: return data.b;
+                case Columns.LastPrice: return data.c;
+                case Columns.TwentyFourHourChange: return ((data.c - data.o) / data.o * 100);
+            }
+        };
     }
 
     private overrideFilter(): void {

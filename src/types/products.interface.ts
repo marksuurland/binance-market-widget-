@@ -71,4 +71,17 @@ export enum Categories {
     UAH = 'UAH'
 }
 
+export enum ParentMarkets {
+    BTC = 'BTC',
+    BNB = 'BNB',
+    ALTS = 'ALTS',
+    FAIT = 'FAIT'
+}
+
+export enum Trend {
+    UP = 'up',
+    DOWN = 'down',
+    NEUTRAL = 'neutral'
+}
+
 
