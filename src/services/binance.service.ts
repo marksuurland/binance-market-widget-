@@ -75,7 +75,7 @@ export class BinanceService {
     }
   }
 
-  private setTrend(element: IProduct) {
+  public setTrend(element: IProduct) {
     const percentage = (element.c - element.o) / element.o * 100;
     if (percentage > 0) {
       element.trend = Trend.UP;

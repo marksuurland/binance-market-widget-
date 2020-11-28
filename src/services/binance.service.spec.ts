@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { BinanceService } from './binance.service';
-import { ParentMarkets } from 'src/types/products.interface';
+import { ParentMarkets, Trend } from 'src/types/products.interface';
 import * as MockService from '../mocks/mocks';
 
 describe('BinanceService', () => {
@@ -35,5 +35,19 @@ describe('BinanceService', () => {
         expect(binanceService.getProductsByParentMarket(ParentMarkets.BTC).length).toEqual(2);
         expect(binanceService.getProductsByParentMarket(ParentMarkets.ALTS).length).toEqual(3);
         expect(binanceService.getProductsByParentMarket(ParentMarkets.FAIT).length).toEqual(4);
+    });
+
+    it('set the product trend, based on the percentage of increase/decrease of the current price against the opening price', () => {
+        const upProduct = {...MockService.mockProduct, c: 0.0016441, o: 0.0016100 };
+        binanceService.setTrend(upProduct);
+        expect(upProduct.trend).toEqual(Trend.UP);
+
+        const downProduct = {...MockService.mockProduct, c: 0.0016441, o: 0.0016500 };
+        binanceService.setTrend(downProduct);
+        expect(downProduct.trend).toEqual(Trend.DOWN);
+
+        const neutralProduct = {...MockService.mockProduct, c: 0.0016441, o: 0.0016441 };
+        binanceService.setTrend(neutralProduct);
+        expect(neutralProduct.trend).toEqual(Trend.NEUTRAL);
     });
 });
