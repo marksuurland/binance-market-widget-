@@ -14,12 +14,12 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatButtonModule } from '@angular/material/button';
 import {OverlayContainer} from '@angular/cdk/overlay';
 
-import { TableSymbolsComponent } from '../app/components/table-symbols/component';
+import { TableProductsComponent } from 'src/app/components/table-products/component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TableSymbolsComponent
+    TableProductsComponent
   ],
   imports: [
     BrowserModule,

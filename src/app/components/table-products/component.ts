@@ -5,11 +5,11 @@ import { Categories, IProduct } from 'src/types/products.interface';
 import { Columns } from 'src/types/table.interface';
 
 @Component({
-    selector: 'app-table-symbols',
+    selector: 'app-table-products',
     styleUrls: ['./component.scss'],
     templateUrl: './component.html'
 })
-export class TableSymbolsComponent implements OnInit, OnChanges, AfterViewInit {
+export class TableProductsComponent implements OnInit, OnChanges, AfterViewInit {
     public dataSource = new MatTableDataSource<IProduct>([]);
 
     public displayedColumns: string[] = [Columns.Pair, Columns.LastPrice, Columns.TwentyFourHourChange];
@@ -18,7 +18,7 @@ export class TableSymbolsComponent implements OnInit, OnChanges, AfterViewInit {
 
     @ViewChild(MatSort) sort: MatSort;
 
-    @Input() symbols: IProduct[];
+    @Input() products: IProduct[];
     @Input() categories: Categories[];
     @Input() searchterm: string;
 
@@ -47,7 +47,7 @@ export class TableSymbolsComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     private setTableData(): void {
-        this.dataSource.data = this.symbols;
+        this.dataSource.data = this.products;
     }
 
     private overrideSort(): void {

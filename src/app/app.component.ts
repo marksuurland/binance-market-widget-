@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.binanceService.getProducts().subscribe((products: IProduct[]) => {
-      this.binanceService.allsymbols = products;
+      this.binanceService.allproducts = products;
       this.binanceService.formatData(products);
       this.loading = false;
     });

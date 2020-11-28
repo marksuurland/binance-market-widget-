@@ -10,11 +10,11 @@ import { IGetProducts, IProduct, IProductMessage, ParentMarkets, Trend } from 's
 })
 
 export class BinanceService {
-  public allsymbols: IProduct[] = [];
-  public bnbsymbols: IProduct[] = [];
-  public btcsymbols: IProduct[] = [];
-  public altssymbols: IProduct[] = [];
-  public faitsymbols: IProduct[] = [];
+  public allproducts: IProduct[] = [];
+  public bnbproducts: IProduct[] = [];
+  public btcproducts: IProduct[] = [];
+  public altsproducts: IProduct[] = [];
+  public faitproducts: IProduct[] = [];
 
   constructor(private http: HttpClient) { }
 
@@ -62,16 +62,16 @@ export class BinanceService {
     // );
   }
 
-  public getSymbolsByParentMarket(parentMarket: string): IProduct[] {
+  public getProductsByParentMarket(parentMarket: string): IProduct[] {
     switch (parentMarket) {
       case ParentMarkets.BTC:
-        return this.btcsymbols;
+        return this.btcproducts;
       case ParentMarkets.BNB:
-        return this.bnbsymbols;
+        return this.bnbproducts;
       case ParentMarkets.ALTS:
-        return this.altssymbols;
+        return this.altsproducts;
       default:
-        return this.faitsymbols;
+        return this.faitproducts;
     }
   }
 
@@ -87,16 +87,16 @@ export class BinanceService {
   }
 
   private seperateByParentMarket(element: IProduct) {
-    this.getSymbolsByParentMarket(element.pm).push(element);
+    this.getProductsByParentMarket(element.pm).push(element);
   }
 
   private handleMessage(message: IProductMessage) {
     const lastThree = message.s.slice(-3);
     const lastFour = message.s.slice(-4);
     const parentMarket = lastFour === ParentMarkets.ALTS ? lastFour : lastThree;
-    const symbolsToCheck: IProduct[] = this.getSymbolsByParentMarket(parentMarket);
+    const productsToCheck: IProduct[] = this.getProductsByParentMarket(parentMarket);
 
-    const symbol = symbolsToCheck.find(symbolToCheck => {
+    const symbol = productsToCheck.find(symbolToCheck => {
       return symbolToCheck.s === message.s;
     });
     if (symbol) {
