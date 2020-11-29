@@ -4,6 +4,7 @@ import { environment } from '../environments/environment';
 import { Subject } from 'rxjs';
 const ENDPOINT = environment.websocketEndpoint;
 
+// TODO: Add retry/reconnect/resubscribe logic
 @Injectable({
     providedIn: 'root'
 })
