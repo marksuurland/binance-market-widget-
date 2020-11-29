@@ -1,10 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Categories, IProduct } from 'src/types/products.interface';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { Categories, IProduct, IProductMessage } from 'src/types/products.interface';
 import { BinanceService } from 'src/services/binance.service';
 import { Subscription } from 'rxjs';
 import {
   MatSnackBar
 } from '@angular/material/snack-bar';
+import { BinanceWebSocketService } from 'src/services/binance.websocket.service';
+import { catchError, map, tap } from 'rxjs/operators';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -20,7 +22,10 @@ export class AppComponent implements OnInit, OnDestroy {
     Categories.IDRT, Categories.NGN, Categories.RUB, Categories.ZAR, Categories.UAH];
   private subscriptions: Subscription[] = [];
 
-  constructor(public binanceService: BinanceService, private snackBar: MatSnackBar) {
+  constructor(
+    public binanceService: BinanceService,
+    private binanceWebSocketService: BinanceWebSocketService,
+    private snackBar: MatSnackBar) {
   }
 
   ngOnInit() {
@@ -39,7 +44,10 @@ export class AppComponent implements OnInit, OnDestroy {
     });
     this.subscriptions.push(subscription);
 
-    this.binanceService.openWebSocket();
+    this.binanceWebSocketService.connect();
+    this.binanceWebSocketService.messagesSubject.subscribe(
+      (productMessage: IProductMessage) => this.binanceService.handleProductMessage(productMessage)
+    );
   }
 
   ngOnDestroy() {
@@ -50,6 +58,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   public applyFilter(event: Event) {
     this.searchterm = (event.target as HTMLInputElement).value;
+  }
+
+  public closeWebSocket() {
+    this.binanceWebSocketService.close();
   }
 
   private openSnackBar(message: string) {

@@ -2,8 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Subject } from 'rxjs/internal/Subject';
+import { environment } from '../environments/environment';
 import { webSocket } from "rxjs/webSocket";
 import { IGetProducts, IProduct, IProductMessage, ParentMarkets, Trend } from 'src/types/products.interface';
+const ENDPOINT = environment.productsEndpoint;
 
 @Injectable({
   providedIn: 'root'
@@ -16,15 +18,13 @@ export class BinanceService {
   public altsproducts: IProduct[] = [];
   public faitproducts: IProduct[] = [];
 
-  private binanceApiUrl = 'https://www.binance.com/exchange-api/v1/public/asset-service/product/get-products';
-
   constructor(private http: HttpClient) { }
 
   public getProducts(): Observable<IProduct[]> {
     const subject = new Subject<IProduct[]>();
     let result: IProduct[] = [];
 
-    this.http.get(this.binanceApiUrl).subscribe({
+    this.http.get(ENDPOINT).subscribe({
       next: (response: IGetProducts) => {
         result = response.data;
       },
@@ -44,25 +44,6 @@ export class BinanceService {
       this.seperateByParentMarket(product);
       this.setTrend(product);
     });
-  }
-
-  public openWebSocket() {
-    // const subject = webSocket('wss://stream.binance.com/stream?streams=!miniTicker@arr');
-
-    // subject.subscribe(
-    //   (event: any) => {
-    //     const data = event.data;
-    //     if (Array.isArray(data)) {
-    //       for (const msg of data) {
-    //         this.handleMessage(msg);
-    //       }
-    //     } else {
-    //       this.handleMessage(data);
-    //     }
-    //   },
-    //   err => console.log(err), // Called if at any point WebSocket API signals some kind of error.
-    //   () => console.log('complete') // Called when connection is closed (for whatever reason).
-    // );
   }
 
   public getProductsByParentMarket(parentMarket: string): IProduct[] {
@@ -93,7 +74,7 @@ export class BinanceService {
     this.getProductsByParentMarket(element.pm).push(element);
   }
 
-  private handleMessage(message: IProductMessage) {
+  public handleProductMessage(message: IProductMessage) {
     const lastThree = message.s.slice(-3);
     const lastFour = message.s.slice(-4);
     const parentMarket = lastFour === ParentMarkets.ALTS ? lastFour : lastThree;
@@ -103,7 +84,6 @@ export class BinanceService {
       return symbolToCheck.s === message.s;
     });
     if (symbol) {
-      console.log('symbol to update', symbol);
       const messageC = parseFloat(message.c);
       const messageO = parseFloat(message.o);
       if (symbol.c > messageC) {

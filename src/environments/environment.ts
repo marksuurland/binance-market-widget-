@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  websocketEndpoint: 'wss://stream.binance.com/stream?streams=!miniTicker@arr',
+  productsEndpoint: 'https://www.binance.com/exchange-api/v1/public/asset-service/product/get-products'
 };
 
 /*
