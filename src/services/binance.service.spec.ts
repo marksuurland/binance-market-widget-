@@ -50,4 +50,10 @@ describe('BinanceService', () => {
         binanceService.setTrend(neutralProduct);
         expect(neutralProduct.trend).toEqual(Trend.NEUTRAL);
     });
+
+    it('based on the product parent market, add it to the parentmarket list of products', () => {
+        const bnbProduct = {...MockService.mockProduct, pm: ParentMarkets.BNB };
+        binanceService.seperateByParentMarket(bnbProduct);
+        expect(binanceService.bnbproducts.length).toEqual(2);
+    });
 });

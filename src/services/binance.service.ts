@@ -16,21 +16,24 @@ export class BinanceService {
   public altsproducts: IProduct[] = [];
   public faitproducts: IProduct[] = [];
 
+  private binanceApiUrl = 'https://www.binance.com/exchange-api/v1/public/asset-service/product/get-products';
+
   constructor(private http: HttpClient) { }
 
   public getProducts(): Observable<IProduct[]> {
     const subject = new Subject<IProduct[]>();
     let result: IProduct[] = [];
 
-    this.http.get(
-      `https://www.binance.com/exchange-api/v1/public/asset-service/product/get-products`
-    ).subscribe({
+    this.http.get(this.binanceApiUrl).subscribe({
       next: (response: IGetProducts) => {
         result = response.data;
       },
-      error: err => console.error('Observer got an error: ' + err),
+      error: err => {
+        subject.error(err);
+      },
       complete: () => {
         subject.next(result);
+        subject.complete();
       },
     });
     return subject.asObservable();
@@ -86,7 +89,7 @@ export class BinanceService {
     }
   }
 
-  private seperateByParentMarket(element: IProduct) {
+  public seperateByParentMarket(element: IProduct) {
     this.getProductsByParentMarket(element.pm).push(element);
   }
 
