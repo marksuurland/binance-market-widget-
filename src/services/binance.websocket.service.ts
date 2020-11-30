@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 const ENDPOINT = environment.websocketEndpoint;
 
 // TODO: Add retry/reconnect/resubscribe logic
+// https://docs.binance.org/api-reference/dex-api/ws-connection.html
 @Injectable({
     providedIn: 'root'
 })
@@ -33,6 +34,7 @@ export class BinanceWebSocketService {
     }
 
     public close(): void {
-        this.socket.complete();
+      this.socket.next({ method: "close" });
+      this.socket.complete();
     }
 }
