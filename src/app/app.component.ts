@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Categories, IProduct, IProductMessage } from 'src/types/products.interface';
 import { BinanceService } from 'src/services/binance.service';
 import { Subscription } from 'rxjs';
@@ -6,7 +6,8 @@ import {
   MatSnackBar
 } from '@angular/material/snack-bar';
 import { BinanceWebSocketService } from 'src/services/binance.websocket.service';
-import { catchError, map, tap } from 'rxjs/operators';
+
+// TODO: ChangeDetectionStrategy check onpush for preformance issues
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
