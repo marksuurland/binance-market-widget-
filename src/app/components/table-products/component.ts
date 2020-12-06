@@ -3,8 +3,6 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { CategoriesALTS, categoriesFIAT, IProduct } from 'src/types/products.interface';
 import { Columns } from 'src/types/table.interface';
-
-// TODO: ChangeDetectionStrategy check onpush for preformance issues
 @Component({
     selector: 'app-table-products',
     styleUrls: ['./component.scss'],

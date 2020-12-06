@@ -57,44 +57,45 @@ export class BinanceService {
     }
   }
 
-  public setTrend(element: IProduct) {
-    const percentage = (element.c - element.o) / element.o * 100;
+  public setTrend(product: IProduct) {
+    const percentage = (product.c - product.o) / product.o * 100;
     if (percentage > 0) {
-      element.trend = Trend.UP;
+      product.trend = Trend.UP;
     } else if (percentage < 0) {
-      element.trend = Trend.DOWN;
+      product.trend = Trend.DOWN;
     } else {
-      element.trend = Trend.NEUTRAL;
+      product.trend = Trend.NEUTRAL;
     }
   }
 
-  public seperateByParentMarket(element: IProduct) {
-    this.getProductsByParentMarket(element.pm).push(element);
+  public seperateByParentMarket(product: IProduct) {
+    this.getProductsByParentMarket(product.pm).push(product);
   }
 
-  public handleProductMessage(message: IProductMessage) {
-    const lastThree = message.s.slice(-3);
-    const lastFour = message.s.slice(-4);
+  // TODO: this function is doing more than 1 thing, split it up.
+  public handleProductMessage(productMessage: IProductMessage) {
+    const lastThree = productMessage.s.slice(-3);
+    const lastFour = productMessage.s.slice(-4);
     const parentMarket = lastFour === ParentMarkets.ALTS ? lastFour : lastThree;
     const productsToCheck: IProduct[] = this.getProductsByParentMarket(parentMarket);
 
     // TODO: N time for each message, improve this.
     const symbol = productsToCheck.find(symbolToCheck => {
-      return symbolToCheck.s === message.s;
+      return symbolToCheck.s === productMessage.s;
     });
     if (symbol) {
-      const messageC = parseFloat(message.c);
-      const messageO = parseFloat(message.o);
-      if (symbol.c > messageC) {
+      const productMessageC = parseFloat(productMessage.c);
+      const productMessageO = parseFloat(productMessage.o);
+      if (symbol.c > productMessageC) {
         symbol.trend = Trend.UP;
-      } else if (symbol.c < messageC) {
+      } else if (symbol.c < productMessageC) {
         symbol.trend = Trend.DOWN;
       } else {
         symbol.trend = Trend.NEUTRAL;
       }
 
-      symbol.c = messageC;
-      symbol.o = messageO;
+      symbol.c = productMessageC;
+      symbol.o = productMessageO;
     }
   }
 
