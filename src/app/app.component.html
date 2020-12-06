@@ -2,6 +2,7 @@
   <h1>Markets</h1>
 
   <button (click)="closeWebSocket()" mat-button>Close WebSocket</button>
+  <button (click)="reconnectWebSocket()" mat-button>Reconnect WebSocket</button>
 
   <mat-form-field class="full_width">
     <input matInput (keyup)="applyFilter($event)" placeholder="Search" #input>

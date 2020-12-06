@@ -38,7 +38,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.openSnackBar(err);
       },
       complete: () => {
-        console.log('complete');
         this.loading = false;
       }
     });
@@ -46,7 +45,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.binanceWebSocketService.connect();
     this.binanceWebSocketService.messagesSubject.subscribe(
-      (productMessage: IProductMessage) => this.binanceService.handleProductMessage(productMessage)
+      (productMessage: IProductMessage) => {
+        if (productMessage) {
+          this.binanceService.handleProductMessage(productMessage);
+        }
+      }
     );
   }
 
@@ -62,6 +65,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   public closeWebSocket() {
     this.binanceWebSocketService.close();
+  }
+
+  public reconnectWebSocket() {
+    this.binanceWebSocketService.reconnect();
   }
 
   private openSnackBar(message: string) {
