@@ -47,10 +47,13 @@ export interface IGetProducts {
     data: IProduct[];
 }
 
-export enum Categories {
+export enum CategoriesALTS {
     ETH = 'ETH',
     TRX = 'TRX',
-    XRP = 'XRP',
+    XRP = 'XRP'
+}
+
+export enum categoriesFIAT {
     USDT = 'USDT',
     BKRW = 'BKRW',
     BUSD = 'BUSD',

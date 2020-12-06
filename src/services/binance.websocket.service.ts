@@ -29,8 +29,12 @@ export class BinanceWebSocketService {
             this.messagesSubject.next(data);
           }
         },
-        err => console.log(err),
-        () => console.log('complete')
+        err => {
+          this.messagesSubject.error(err);
+        },
+        () => {
+          this.messagesSubject.complete();
+        }
       );
       this.socket.next({ method: this.subscribeMethod, params: [this.subjectName], id: this.id });
     }

@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Categories, IProduct, IProductMessage } from 'src/types/products.interface';
+import { CategoriesALTS, categoriesFIAT, IProductMessage } from 'src/types/products.interface';
 import { BinanceService } from 'src/services/binance.service';
 import { Subscription } from 'rxjs';
 import {
   MatSnackBar
 } from '@angular/material/snack-bar';
 import { BinanceWebSocketService } from 'src/services/binance.websocket.service';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -14,12 +15,13 @@ import { BinanceWebSocketService } from 'src/services/binance.websocket.service'
 export class AppComponent implements OnInit, OnDestroy {
   public loading = true;
   public searchterm = '';
-  public categoriesALTS: string[] = [Categories.ETH, Categories.TRX, Categories.XRP];
-  public categoriesFAIT: string[] = [Categories.USDT, Categories.BKRW, Categories.BUSD,
-    Categories.EUR, Categories.TUSD, Categories.USDC, Categories.TRY, Categories.PAX,
-    Categories.AUD, Categories.BIDR, Categories.BRL, Categories.DAI, Categories.GBP,
-    Categories.IDRT, Categories.NGN, Categories.RUB, Categories.ZAR, Categories.UAH];
+  public categoriesALTS: string[] = [CategoriesALTS.ETH, CategoriesALTS.TRX, CategoriesALTS.XRP];
+  public categoriesFIAT: string[] = [categoriesFIAT.USDT, categoriesFIAT.BKRW, categoriesFIAT.BUSD,
+    categoriesFIAT.EUR, categoriesFIAT.TUSD, categoriesFIAT.USDC, categoriesFIAT.TRY, categoriesFIAT.PAX,
+    categoriesFIAT.AUD, categoriesFIAT.BIDR, categoriesFIAT.BRL, categoriesFIAT.DAI, categoriesFIAT.GBP,
+    categoriesFIAT.IDRT, categoriesFIAT.NGN, categoriesFIAT.RUB, categoriesFIAT.ZAR, categoriesFIAT.UAH];
   private subscriptions: Subscription[] = [];
+  private succeedMessageGetProducts = 'Binance products succesfully retrieved';
 
   constructor(
     public binanceService: BinanceService,
@@ -28,25 +30,31 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const subscription = this.binanceService.getProducts().subscribe({
+    const binanceServiceSubscription = this.binanceService.getProducts().subscribe({
       next: () => {},
       error: err => {
         this.openSnackBar(err);
       },
       complete: () => {
+        this.openSnackBar(this.succeedMessageGetProducts);
         this.loading = false;
       }
     });
-    this.subscriptions.push(subscription);
+    this.subscriptions.push(binanceServiceSubscription);
 
     this.binanceWebSocketService.connect();
-    this.binanceWebSocketService.messagesSubject.subscribe(
-      (productMessage: IProductMessage) => {
+    const binanceWebSocketServiceSubscription = this.binanceWebSocketService.messagesSubject.subscribe({
+      next: (productMessage: IProductMessage) => {
         if (productMessage) {
           this.binanceService.handleProductMessage(productMessage);
         }
-      }
-    );
+      },
+      error: err => {
+        this.openSnackBar(err);
+      },
+      complete: () => {}
+    });
+    this.subscriptions.push(binanceWebSocketServiceSubscription);
   }
 
   ngOnDestroy() {
@@ -69,7 +77,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private openSnackBar(message: string) {
     this.snackBar.open(message, '', {
-      duration: 1000,
+      duration: 2000,
       horizontalPosition: 'right',
       verticalPosition: 'bottom',
     });
