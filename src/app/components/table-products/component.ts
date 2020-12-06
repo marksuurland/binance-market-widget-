@@ -1,13 +1,15 @@
-import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Categories, IProduct } from 'src/types/products.interface';
 import { Columns } from 'src/types/table.interface';
 
+// TODO: ChangeDetectionStrategy check onpush for preformance issues
 @Component({
     selector: 'app-table-products',
     styleUrls: ['./component.scss'],
-    templateUrl: './component.html'
+    templateUrl: './component.html',
+    changeDetection: ChangeDetectionStrategy.Default
 })
 export class TableProductsComponent implements OnInit, OnChanges, AfterViewInit {
     public dataSource = new MatTableDataSource<IProduct>([]);

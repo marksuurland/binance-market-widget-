@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Subject } from 'rxjs/internal/Subject';
 import { environment } from '../environments/environment';
-import { webSocket } from "rxjs/webSocket";
 import { IGetProducts, IProduct, IProductMessage, ParentMarkets, Trend } from 'src/types/products.interface';
 const ENDPOINT = environment.productsEndpoint;
 
@@ -20,19 +19,18 @@ export class BinanceService {
 
   constructor(private http: HttpClient) { }
 
-  public getProducts(): Observable<IProduct[]> {
-    const subject = new Subject<IProduct[]>();
-    let result: IProduct[] = [];
+  public getProducts(): Observable<void> {
+    const subject = new Subject<void>();
 
     this.http.get(ENDPOINT).subscribe({
       next: (response: IGetProducts) => {
-        result = response.data;
+        this.allproducts = response.data;
+        this.formatData(this.allproducts);
       },
       error: err => {
         subject.error(err);
       },
       complete: () => {
-        subject.next(result);
         subject.complete();
       },
     });
@@ -80,6 +78,7 @@ export class BinanceService {
     const parentMarket = lastFour === ParentMarkets.ALTS ? lastFour : lastThree;
     const productsToCheck: IProduct[] = this.getProductsByParentMarket(parentMarket);
 
+    // TODO: N time for each message, improve this.
     const symbol = productsToCheck.find(symbolToCheck => {
       return symbolToCheck.s === message.s;
     });

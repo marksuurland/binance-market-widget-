@@ -6,8 +6,6 @@ import {
   MatSnackBar
 } from '@angular/material/snack-bar';
 import { BinanceWebSocketService } from 'src/services/binance.websocket.service';
-
-// TODO: ChangeDetectionStrategy check onpush for preformance issues
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -31,10 +29,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const subscription = this.binanceService.getProducts().subscribe({
-      next: (products: IProduct[]) => {
-        this.binanceService.allproducts = products;
-        this.binanceService.formatData(products);
-      },
+      next: () => {},
       error: err => {
         this.openSnackBar(err);
       },
